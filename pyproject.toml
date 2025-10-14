@@ -1,0 +1,31 @@
+license = "MIT"
+license-files = [
+    "LICENSE",
+]
+
+[build-system]
+requires = [
+    "setuptools==80.9.0",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "docassemble.Accommodationrequestletter"
+version = "1.0"
+description = "Tenant Accommodations Request Letter"
+readme = "README.md"
+authors = [
+    { name = "Suffolk LIT Lab", email = "wkh06781@su.suffolk.edu" },
+]
+dependencies = [
+    "docassemble.ALMassachusetts @ git+https://github.com/SuffolkLITLab/docassemble-ALMassachusetts.git@main",
+    "docassemble.AssemblyLine @ git+https://github.com/SuffolkLITLab/docassemble-AssemblyLine.git@main",
+]
+
+[project.urls]
+Homepage = "https://courtformsonline.org"
+
+[tool.setuptools.packages.find]
+where = [
+    ".",
+]
