@@ -9,11 +9,11 @@ metadata:
   short title: >-
     Accommodations Request
   description: |-
-    This interview helps a tenant write a letter to request housing accommodations for a disabled person.
+    This interview helps a tenant write a letter to request accommodations for a disabled person.
   can_I_use_this_form: |
     If you rent your home, you can use this interview to request accommodations for a disabled person.
   before_you_start: |
-    This interview will help you write a letter to request housing accommodations for a disabled person.
+    This interview will help you write a letter to request accommodations for a disabled person.
     
     Before you get started:
     
@@ -22,9 +22,10 @@ metadata:
     
     When you are finished, download the completed letter and either:
         
-        1. Upload the signed letter to your tenant portal, 
-        2. Send an email to your landlord or property management company and attach the signed letter, or;
-        3. Print and mail the letter to your landlord or property management company.
+    1. Upload the signed letter to your tenant portal, 
+    2. Attach the letter to an email to your landlord or property management company, or;
+    3. Print and mail the letter to your landlord or property management company.
+  
   maturity: production
   estimated_completion_minutes: 7
   estimated_completion_delta: 5
@@ -67,13 +68,14 @@ code: |
   github_repo_name =  'docassemble-Accommodationrequestletter'
 ---
 code: |
-  interview_short_title = "Write a letter to request housing accommodations for a disabled person."
+  interview_short_title = "Write a letter requesting accommodations for a disabled person."
 ---
 code: |
   al_form_type = "letter" 
 ---
 objects:
   - users: ALPeopleList.using(ask_number=True,target_number=1)
+  - landlords: ALPeopleList.using(ask_number=True,target_number=1)
 ---
 sections:
   - review_accommodationrequestletter: Review your answers
@@ -87,13 +89,19 @@ code: |
   nav.set_section("review_accommodationrequestletter")
   user_role = "na"
   user_ask_role = "na"
+  disability_exists
+  if disability_exists == False: 
+    no_disability
+  set_progress(25)
   users.gather()
   set_parts(subtitle=str(users))
-  Are_you_a_tenant_asking_a_landlord_for_accommodations
   users[0].phone_number
-  set_progress(25)
-  signature_date
   users[0].address.address
+  set_progress(50)
+  landlords.gather()
+  set_parts(subtitle=str(landlords))
+  landlords[0].address.address
+  signature_date
   interview_order_accommodationrequestletter = True
 ---
 ###################### Main order ######################
@@ -124,24 +132,33 @@ subquestion: |
   This interview will help you write a letter to request housing accommodations for a disabled person.
   
   Before you get started:
-  
-  1. Gather the name and address of your landlord or property management company.
-  2. Connect to your tenant portal, if applicable. 
-  
+    
+    1. Gather the name and address of your landlord or property management company.
+    2. Connect to your tenant portal, if applicable. 
+    
   When you are finished, download the completed letter and either:
-      
-      1. Upload the signed letter to your tenant portal, 
-      2. Send an email to your landlord or property management company and attach the signed letter, or;
-      3. Print and mail the letter to your landlord or property management company.
+        
+    1. Upload the signed letter to your tenant portal, 
+    2. Attach the letter to an email to your landlord or property management company, or;
+    3. Print and mail the letter to your landlord or property management company.
 
   If you rent your home, you can use this interview to request accommodations for a disabled person.
 
   Most people take about 7 minutes to complete this interview.
 ---
-id: Are you a tenant asking a landlord for accommodations
+id: Confirm Purpose
 question: |
   Are you a tenant asking a landlord for accommodations?
-continue button field: Are_you_a_tenant_asking_a_landlord_for_accommodations
+fields:
+  - no label: disability_exists
+    datatype: yesnoradio  
+---
+id: No Disability Offramp
+event: no_disability
+question: | 
+  Since you are not a tenant asking for an accomodation related to a disability you will not want to use this form.
+buttons: 
+  - Exit: exit
 ---
 id: preview accommodationrequestletter
 question: |
@@ -161,12 +178,6 @@ continue button field: accommodationrequestletter_preview_question
 ---
 code: |
   signature_fields = ['users[0].signature']
----
-code: |
-  landlords[0].name.first = DAEmpty()
----
-code: |
-  landlords[0].address.address = DAEmpty()
 ---
 code: |
   subject_ref = DAEmpty()
